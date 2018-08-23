@@ -1,5 +1,7 @@
 package jp.co.run.api.dao.impl;
 
+import java.math.BigInteger;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +19,7 @@ import jp.co.run.api.dao.CommonDao;
 import jp.co.run.api.dto.account.AccountDto;
 import jp.co.run.api.entity.AccountEntity;
 import jp.co.run.api.exception.InsertDataAlreadyExistException;
+import jp.co.run.api.request.data.AccountRegistRequest;
 import jp.co.run.api.util.SqlFileReaderUtil;
 
 @Component
@@ -31,6 +34,8 @@ public class AccountDaoImpl implements AccountDao {
     private static final String SQL_GET_ACCOUNT = "/account/get_account.sql";
 
     private static final String SQL_SELECT_ACCOUNT_BY_USER_NAME = "/account/select_account_by_user_name.sql";
+
+    private static final String SQL_INSERT_ACCOUNT = "/account/insert_account.sql";
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -62,14 +67,39 @@ public class AccountDaoImpl implements AccountDao {
 
         int count = commonDao.select(SQL_SELECT_ACCOUNT_BY_USER_NAME, mapParam);
         // Check data already exist
-        if(count > 0) {
+        if (count > 0) {
             throw new InsertDataAlreadyExistException("ユーザー名" + accountEntity.getUserName() + "は、既に登録されています。");
         }
-        try {
-            // Insert data
-            commonDao.insert(accountEntity);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+        // Insert data
+        commonDao.insert(accountEntity);
+    }
+
+    @Override
+    public int insert(AccountRegistRequest accountRegistRequest) throws Exception {
+
+        Map<String, Object> mapParam = new HashMap<String, Object>();
+        mapParam.put("userName", accountRegistRequest.getUserName());
+        mapParam.put("password", accountRegistRequest.getPassword());
+        mapParam.put("expiryDate", new Date());
+        mapParam.put("deleteExpiredAccount", null);
+        mapParam.put("mailAddress", accountRegistRequest.getMailAddress());
+        mapParam.put("roleId", 1);
+        mapParam.put("registerUser", "User");
+        mapParam.put("registerTime", new Date());
+        mapParam.put("updateUser", null);
+        mapParam.put("updateTime", null);
+        mapParam.put("deleteFlag", 0);
+
+        return commonDao.insert(SQL_INSERT_ACCOUNT, BigInteger.class, mapParam);
+    }
+
+    @Override
+    public int select(AccountRegistRequest accountRegistRequest) throws Exception {
+
+        Map<String, Object> mapParam = new HashMap<String, Object>();
+        mapParam.put("userName", accountRegistRequest.getUserName());
+
+        return commonDao.select(SQL_SELECT_ACCOUNT_BY_USER_NAME, mapParam);
     }
 }

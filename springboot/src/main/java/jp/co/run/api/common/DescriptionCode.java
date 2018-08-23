@@ -21,7 +21,8 @@ public enum DescriptionCode {
     MAINTENANCE_ERROR("E00-110"),
     SERVER_SYSYTEM_ERROR("E00-111"),
     SERVER_CONNECT_ERROR("E00-112"),
-    SELECT_NOT_EXISTS_ERROR("E00-113");
+    SELECT_NOT_EXISTS_ERROR("E00-113"),
+    SYSTE_ERROR("E00-999");
 
     private String code;
 

@@ -8,7 +8,7 @@ import jp.co.run.api.request.data.LoginRequest;
  * The Interface AccountService.
  */
 public interface AccountService {
-    
+
     /**
      * Login.
      *
@@ -17,7 +17,7 @@ public interface AccountService {
      * @throws Exception the exception
      */
     public AccountDto login(final LoginRequest loginRequest) throws Exception;
-    
+
     /**
      * Regist.
      *

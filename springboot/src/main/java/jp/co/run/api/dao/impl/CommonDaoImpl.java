@@ -27,7 +27,7 @@ public class CommonDaoImpl implements CommonDao {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see jp.co.run.api.dao.CommonDao#insert(java.lang.Object)
      */
     @Override
@@ -38,7 +38,7 @@ public class CommonDaoImpl implements CommonDao {
             // Insert data to DB
             session.save(entity);
 
-            //session.getTransaction().commit();
+            // session.getTransaction().commit();
             session.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -46,9 +46,26 @@ public class CommonDaoImpl implements CommonDao {
         }
     }
 
+    @SuppressWarnings({ "deprecation", "unchecked" })
+    @Override
+    public <T> int insert(String pathSql, Class<T> clzz, Map<String, Object> param) throws Exception {
+
+        // Get content of sql
+        String sqlQuery = SqlFileReaderUtil.getSql(pathSql);
+        Session session = sessionFactory.getCurrentSession();
+        Query<T> query = session.createNativeQuery(sqlQuery).setResultTransformer(Transformers.aliasToBean(clzz));
+
+        for (Map.Entry<String, Object> map : param.entrySet()) {
+            // Set value for parameter
+            query.setParameter(map.getKey(), map.getValue());
+        }
+
+        return query.executeUpdate();
+    }
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see jp.co.run.api.dao.CommonDao#select(java.lang.String, java.lang.Class,
      * java.util.Map)
      */
@@ -62,6 +79,7 @@ public class CommonDaoImpl implements CommonDao {
         Query<T> query = session.createNativeQuery(sqlQuery).setResultTransformer(Transformers.aliasToBean(clzz));
 
         for (Map.Entry<String, Object> map : param.entrySet()) {
+            // Set value for parameter
             query.setParameter(map.getKey(), map.getValue());
         }
         List<T> result = query.getResultList();
@@ -71,7 +89,7 @@ public class CommonDaoImpl implements CommonDao {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see jp.co.run.api.dao.CommonDao#select(java.lang.String, java.util.Map)
      */
     @Override

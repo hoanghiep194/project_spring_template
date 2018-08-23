@@ -26,7 +26,7 @@ public class AccountController extends AbstractController {
     /**
      * Login.
      *
-     * @param request            the request
+     * @param request the request
      * @return the api response
      * @throws Exception the exception
      */
@@ -46,12 +46,6 @@ public class AccountController extends AbstractController {
     @RequestMapping(value = "/regist", method = RequestMethod.POST)
     public ApiResponse regist(@RequestBody AccountRegistRequest request) throws Exception {
 
-        try {
-            accountService.regist(request);
-        } catch (Exception e) {
-            return createErrorResponse(e);
-        }
-        
-        return createResponse(null);
+        return createResponse(accountService.regist(request));
     }
 }
