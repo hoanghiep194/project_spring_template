@@ -17,7 +17,8 @@ public enum ResultType {
     UPDATE_FAILURE(400, "update_failure", DescriptionCode.UPDATE_ERROR, ""),
     DELETE_FAILURE(400, "delete_failure", DescriptionCode.UPDATE_ERROR, ""),
     CHECK_AUTH_INVALID(401, "check_auth_invalid", DescriptionCode.AUTH_ERROR, ""),
-    CHECK_TOKEN_EXPIRED(401, "check_token_expired", DescriptionCode.AUTH_ERROR, ""),;
+    CHECK_TOKEN_EXPIRED(401, "check_token_expired", DescriptionCode.AUTH_ERROR, ""),
+    INTERNAL_SERVER_ERROR(500, "internal_server_error", null, "");
 
     private Integer status;
     private String type;

@@ -11,8 +11,8 @@ import lombok.Data;
 public class LoginRequest {
     
     /** The login id. */
-    @JsonProperty("login_id")
-    private String loginId;
+    @JsonProperty("user_name")
+    private String userName;
     
     /** The password. */
     @JsonProperty("password")

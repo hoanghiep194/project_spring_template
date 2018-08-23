@@ -1,7 +1,9 @@
 package jp.co.run.api.dao;
 
-import jp.co.run.api.request.data.LoginRequest;
+import jp.co.run.api.dto.account.AccountDto;
+import jp.co.run.api.entity.AccountEntity;
 
 public interface AccountDao {
-    public int getAccountLogin(final LoginRequest loginRequest) throws Exception;
+    public AccountDto getAccountLogin(final String userName) throws Exception;
+    public void insert (final AccountEntity accountEntity) throws Exception;
 }
