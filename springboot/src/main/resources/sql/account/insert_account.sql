@@ -1,9 +1,7 @@
 INSERT INTO account
         (user_name,
-         password,
          expiry_date,
          delete_expired_account,
-         mail_address,
          role_id,
          register_user,
          register_time,
@@ -12,10 +10,8 @@ INSERT INTO account
          delete_flag)
 
 VALUES (:userName,
-        :password,
         :expiryDate,
         :deleteExpiredAccount,
-        :mailAddress,
         :roleId,
         :registerUser,
         :registerTime,

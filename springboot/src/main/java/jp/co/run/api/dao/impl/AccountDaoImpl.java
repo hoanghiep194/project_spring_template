@@ -14,29 +14,47 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import jp.co.run.api.common.Constants;
 import jp.co.run.api.dao.AccountDao;
 import jp.co.run.api.dao.CommonDao;
 import jp.co.run.api.dto.account.AccountDto;
 import jp.co.run.api.entity.AccountEntity;
 import jp.co.run.api.exception.InsertDataAlreadyExistException;
 import jp.co.run.api.request.data.AccountRegistRequest;
+import jp.co.run.api.util.CommonUitl;
 import jp.co.run.api.util.SqlFileReaderUtil;
 
+/**
+ * The Class AccountDaoImpl.
+ */
 @Component
 public class AccountDaoImpl implements AccountDao {
 
+    /** The session factory. */
     @Autowired
     private SessionFactory sessionFactory;
 
+    /** The common dao. */
     @Autowired
     private CommonDao commonDao;
 
+    /** The Constant SQL_GET_ACCOUNT. */
     private static final String SQL_GET_ACCOUNT = "/account/get_account.sql";
 
+    /** The Constant SQL_SELECT_ACCOUNT_BY_USER_NAME. */
     private static final String SQL_SELECT_ACCOUNT_BY_USER_NAME = "/account/select_account_by_user_name.sql";
 
+    /** The Constant SQL_INSERT_ACCOUNT. */
     private static final String SQL_INSERT_ACCOUNT = "/account/insert_account.sql";
 
+    /** The Constant SQL_INSERT_USER_INFO. */
+    private static final String SQL_INSERT_USER_INFO = "/account/insert_user.sql";
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see jp.co.run.api.dao.AccountDao#getAccountLogin(java.lang.String)
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     @SuppressWarnings({ "unchecked", "deprecation" })
@@ -59,6 +77,11 @@ public class AccountDaoImpl implements AccountDao {
         return accountDto;
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see jp.co.run.api.dao.AccountDao#insert(jp.co.run.api.entity.AccountEntity)
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void insert(AccountEntity accountEntity) throws Exception {
@@ -75,17 +98,49 @@ public class AccountDaoImpl implements AccountDao {
         commonDao.insert(accountEntity);
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see jp.co.run.api.dao.AccountDao#insertUserInfo(jp.co.run.api.request.data.
+     * AccountRegistRequest)
+     */
     @Override
-    public int insert(AccountRegistRequest accountRegistRequest) throws Exception {
+    public int insertUserInfo(AccountRegistRequest accountRegistRequest) throws Exception {
 
         Map<String, Object> mapParam = new HashMap<String, Object>();
         mapParam.put("userName", accountRegistRequest.getUserName());
+        mapParam.put("firstName", accountRegistRequest.getFirstName());
+        mapParam.put("lastName", accountRegistRequest.getLastName());
         mapParam.put("password", accountRegistRequest.getPassword());
+        mapParam.put("birthday", CommonUitl.convertStringToDate(accountRegistRequest.getBirthday(),
+                Constants.CONST_FORMAT_DATE_YYYY_MM_DD));
+        mapParam.put("sex", accountRegistRequest.getSex());
+        mapParam.put("emailAddress", accountRegistRequest.getEmailAddress());
+        mapParam.put("address", accountRegistRequest.getAddress());
+        mapParam.put("phone", accountRegistRequest.getPhone());
+        mapParam.put("registUser", accountRegistRequest.getUserName());
+        mapParam.put("registTime", new Date());
+        mapParam.put("updateUser", null);
+        mapParam.put("updateTime", null);
+        mapParam.put("deleteFlag", 0);
+
+        return commonDao.insert(SQL_INSERT_USER_INFO, BigInteger.class, mapParam);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see jp.co.run.api.dao.AccountDao#insertAccount(java.lang.String)
+     */
+    @Override
+    public int insertAccount(String userName) throws Exception {
+
+        Map<String, Object> mapParam = new HashMap<String, Object>();
+        mapParam.put("userName", userName);
         mapParam.put("expiryDate", new Date());
         mapParam.put("deleteExpiredAccount", null);
-        mapParam.put("mailAddress", accountRegistRequest.getMailAddress());
         mapParam.put("roleId", 1);
-        mapParam.put("registerUser", "User");
+        mapParam.put("registerUser", userName);
         mapParam.put("registerTime", new Date());
         mapParam.put("updateUser", null);
         mapParam.put("updateTime", null);
@@ -94,6 +149,12 @@ public class AccountDaoImpl implements AccountDao {
         return commonDao.insert(SQL_INSERT_ACCOUNT, BigInteger.class, mapParam);
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see jp.co.run.api.dao.AccountDao#select(jp.co.run.api.request.data.
+     * AccountRegistRequest)
+     */
     @Override
     public int select(AccountRegistRequest accountRegistRequest) throws Exception {
 
@@ -102,4 +163,5 @@ public class AccountDaoImpl implements AccountDao {
 
         return commonDao.select(SQL_SELECT_ACCOUNT_BY_USER_NAME, mapParam);
     }
+
 }

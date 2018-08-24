@@ -37,9 +37,6 @@ public class CommonDaoImpl implements CommonDao {
             Session session = sessionFactory.getCurrentSession();
             // Insert data to DB
             session.save(entity);
-
-            // session.getTransaction().commit();
-            session.close();
         } catch (Exception e) {
             e.printStackTrace();
             throw new InsertFailureException("Failed by insert error");
@@ -50,17 +47,22 @@ public class CommonDaoImpl implements CommonDao {
     @Override
     public <T> int insert(String pathSql, Class<T> clzz, Map<String, Object> param) throws Exception {
 
-        // Get content of sql
-        String sqlQuery = SqlFileReaderUtil.getSql(pathSql);
-        Session session = sessionFactory.getCurrentSession();
-        Query<T> query = session.createNativeQuery(sqlQuery).setResultTransformer(Transformers.aliasToBean(clzz));
+        try {
+            // Get content of sql
+            String sqlQuery = SqlFileReaderUtil.getSql(pathSql);
+            Session session = sessionFactory.getCurrentSession();
+            Query<T> query = session.createNativeQuery(sqlQuery).setResultTransformer(Transformers.aliasToBean(clzz));
 
-        for (Map.Entry<String, Object> map : param.entrySet()) {
-            // Set value for parameter
-            query.setParameter(map.getKey(), map.getValue());
+            for (Map.Entry<String, Object> map : param.entrySet()) {
+                // Set value for parameter
+                query.setParameter(map.getKey(), map.getValue());
+            }
+
+            return query.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new InsertFailureException("Failed by insert error");
         }
-
-        return query.executeUpdate();
     }
 
     /*
@@ -75,6 +77,7 @@ public class CommonDaoImpl implements CommonDao {
 
         // Get content of sql
         String sqlQuery = SqlFileReaderUtil.getSql(pathSql);
+
         Session session = sessionFactory.getCurrentSession();
         Query<T> query = session.createNativeQuery(sqlQuery).setResultTransformer(Transformers.aliasToBean(clzz));
 
@@ -106,11 +109,12 @@ public class CommonDaoImpl implements CommonDao {
             query.setParameter(map.getKey(), map.getValue());
         }
 
-        if (query.getResultList().size() == 0) {
+        List<BigInteger> resultList = query.getResultList();
+        if (resultList.size() == 0) {
             return 0;
         }
 
-        return query.getResultList().get(0).intValue();
+        return resultList.get(0).intValue();
     }
 
 }

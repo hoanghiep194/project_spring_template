@@ -25,10 +25,6 @@ public class AccountEntity {
     @Column(name = "user_name")
     private String userName;
 
-    /** The password. */
-    @Column(name = "password")
-    private String password;
-
     /** The expiry date. */
     @Column(name = "expiry_date")
     private Date expiryDate;

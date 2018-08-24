@@ -1,6 +1,10 @@
 package jp.co.run.api.common;
 
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Enum ResultType.
+ */
 public enum ResultType {
 
     SUCCESS(200, "success", DescriptionCode.SUCCESS, ""),
@@ -20,11 +24,26 @@ public enum ResultType {
     CHECK_TOKEN_EXPIRED(401, "check_token_expired", DescriptionCode.AUTH_ERROR, ""),
     INTERNAL_SERVER_ERROR(500, "internal_server_error", null, "");
 
+    /** The status. */
     private Integer status;
+
+    /** The type. */
     private String type;
+
+    /** The description code. */
     private DescriptionCode descriptionCode;
+
+    /** The description sub. */
     private String descriptionSub;
 
+    /**
+     * Instantiates a new result type.
+     *
+     * @param status the status
+     * @param type the type
+     * @param descriptionCode the description code
+     * @param descriptionSub the description sub
+     */
     private ResultType(Integer status, String type, DescriptionCode descriptionCode, String descriptionSub) {
         this.status = status;
         this.type = type;
@@ -32,18 +51,38 @@ public enum ResultType {
         this.descriptionSub = descriptionSub;
     }
 
+    /**
+     * Gets the status.
+     *
+     * @return the status
+     */
     public Integer getStatus() {
         return status;
     }
 
+    /**
+     * Gets the type.
+     *
+     * @return the type
+     */
     public String getType() {
         return type;
     }
 
+    /**
+     * Gets the description code.
+     *
+     * @return the description code
+     */
     public DescriptionCode getDescriptionCode() {
         return descriptionCode;
     }
 
+    /**
+     * Gets the description sub.
+     *
+     * @return the description sub
+     */
     public String getDescriptionSub() {
         return descriptionSub;
     }

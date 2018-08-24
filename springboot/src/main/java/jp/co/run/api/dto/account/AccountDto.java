@@ -7,10 +7,10 @@ import lombok.Data;
  */
 @Data
 public class AccountDto {
-    
+
     /** The user name. */
     private String userName;
-    
+
     /** The password. */
     private String password;
 }

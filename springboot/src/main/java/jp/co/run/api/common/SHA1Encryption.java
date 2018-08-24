@@ -11,7 +11,7 @@ import javax.crypto.spec.PBEKeySpec;
 /**
  * The Class Md5Encryption.
  */
-public class HmacSHA1Encryption {
+public class SHA1Encryption {
 
     private static final String ALGORITHM = "PBKDF2WithHmacSHA1";
     private static final String TRANSFORMATION_PADDING = "SHA1PRNG";
