@@ -9,6 +9,7 @@ public enum ResultType {
 
     SUCCESS(200, "success", DescriptionCode.SUCCESS, ""),
     PARAMETERS_SHORTAGE(400, "parameters_shortage", DescriptionCode.PARAMETER_REQUIRED_ERROR, ""),
+    CHECK_PASSWORD(400, "password_invalid", DescriptionCode.PARAMETER_REQUIRED_ERROR, ""),
     PARAMETERS_INVALID(400, "parameters_invalid", DescriptionCode.PARAMETER_ERROR, ""),
     INSERT_DATA_ALREADY_EXIST(400, "insert_data_already_exist", DescriptionCode.INSERT_DUPLICATE_ERROR, ""),
     UPDATE_DATA_NOT_EXIST(400, "updated_data_not_exist", DescriptionCode.UPDATE_NOT_EXISTS_ERROR, ""),

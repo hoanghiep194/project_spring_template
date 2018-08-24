@@ -13,17 +13,17 @@ import lombok.Data;
 @Data
 public class CommonListResponseData {
 
-	@JsonProperty("count")
-	private int count;
+    @JsonProperty("count")
+    private int count;
 
-	@JsonProperty("total_count")
-	private int totalCount;
+    @JsonProperty("total_count")
+    private int totalCount;
 
-	@JsonProperty("result_list")
-	private List<?> resultList;
+    @JsonProperty("result_list")
+    private List<?> resultList;
 
-	@SuppressWarnings("rawtypes")
-	public CommonListResponseData() {
-		this.resultList = new ArrayList();
-	}
+    @SuppressWarnings("rawtypes")
+    public CommonListResponseData() {
+        this.resultList = new ArrayList();
+    }
 }

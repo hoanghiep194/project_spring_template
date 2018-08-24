@@ -6,10 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.query.Query;
-import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +18,6 @@ import jp.co.run.api.entity.AccountEntity;
 import jp.co.run.api.exception.InsertDataAlreadyExistException;
 import jp.co.run.api.request.data.AccountRegistRequest;
 import jp.co.run.api.util.CommonUitl;
-import jp.co.run.api.util.SqlFileReaderUtil;
 
 /**
  * The Class AccountDaoImpl.
@@ -30,16 +25,12 @@ import jp.co.run.api.util.SqlFileReaderUtil;
 @Component
 public class AccountDaoImpl implements AccountDao {
 
-    /** The session factory. */
-    @Autowired
-    private SessionFactory sessionFactory;
-
     /** The common dao. */
     @Autowired
     private CommonDao commonDao;
 
     /** The Constant SQL_GET_ACCOUNT. */
-    private static final String SQL_GET_ACCOUNT = "/account/get_account.sql";
+    private static final String SQL_SELECT_ACCOUNT = "/account/select_account.sql";
 
     /** The Constant SQL_SELECT_ACCOUNT_BY_USER_NAME. */
     private static final String SQL_SELECT_ACCOUNT_BY_USER_NAME = "/account/select_account_by_user_name.sql";
@@ -57,23 +48,16 @@ public class AccountDaoImpl implements AccountDao {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @SuppressWarnings({ "unchecked", "deprecation" })
     public AccountDto getAccountLogin(String userName) throws Exception {
 
         AccountDto accountDto = null;
-        // Get content of sql
-        String sqlQuery = SqlFileReaderUtil.getSql(SQL_GET_ACCOUNT);
-        Session session = sessionFactory.getCurrentSession();
+        Map<String, Object> mapParam = new HashMap<String, Object>();
+        mapParam.put("userName", userName);
 
-        Query<AccountDto> query = session.createNativeQuery(sqlQuery)
-                .setResultTransformer(Transformers.aliasToBean(AccountDto.class));
-        // Set parameter
-        query.setParameter("userName", userName);
-        List<AccountDto> result = query.getResultList();
-        if (result.size() > 0) {
-            accountDto = result.get(0);
+        List<AccountDto> listAccount = commonDao.select(SQL_SELECT_ACCOUNT, AccountDto.class, mapParam);
+        if(listAccount.size() > 0) {
+            accountDto = listAccount.get(0);
         }
-
         return accountDto;
     }
 
