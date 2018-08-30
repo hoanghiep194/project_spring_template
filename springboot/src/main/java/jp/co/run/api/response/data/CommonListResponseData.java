@@ -13,8 +13,8 @@ import lombok.Data;
 @Data
 public class CommonListResponseData {
 
-    @JsonProperty("count")
-    private int count;
+    @JsonProperty("offset")
+    private int offset;
 
     @JsonProperty("total_count")
     private int totalCount;

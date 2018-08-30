@@ -12,8 +12,9 @@ public class ApiResponse {
     private Integer status;
     private String type;
     private String description;
+    @JsonProperty("description_sub")
     private String descriptionSub;
-    
+
     @JsonProperty("result_data")
     private Object resultData;
 }

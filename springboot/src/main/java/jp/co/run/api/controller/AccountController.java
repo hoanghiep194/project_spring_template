@@ -1,4 +1,4 @@
-package jp.co.run.api.controller.account;
+package jp.co.run.api.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;

@@ -1,8 +1,8 @@
 package jp.co.run.api.services;
 
-import jp.co.run.api.dto.account.AccountDto;
 import jp.co.run.api.request.data.AccountRegistRequest;
 import jp.co.run.api.request.data.LoginRequest;
+import jp.co.run.api.response.data.CommonListResponseData;
 
 /**
  * The Interface AccountService.
@@ -16,7 +16,7 @@ public interface AccountService {
      * @return the account dto
      * @throws Exception the exception
      */
-    public AccountDto login(final LoginRequest loginRequest) throws Exception;
+    public CommonListResponseData login(final LoginRequest loginRequest) throws Exception;
 
     /**
      * Regist.

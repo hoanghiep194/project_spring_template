@@ -1,40 +1,60 @@
 package jp.co.run.api.services.impl;
 
+import java.security.MessageDigest;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import jp.co.run.api.common.SHA1Encryption;
 import jp.co.run.api.dao.AccountDao;
-import jp.co.run.api.dto.account.AccountDto;
 import jp.co.run.api.exception.CheckPasswordFailureException;
 import jp.co.run.api.exception.InsertDataAlreadyExistException;
 import jp.co.run.api.exception.InsertFailureException;
 import jp.co.run.api.request.data.AccountRegistRequest;
 import jp.co.run.api.request.data.LoginRequest;
+import jp.co.run.api.response.data.AccountRespone;
+import jp.co.run.api.response.data.CommonListResponseData;
 import jp.co.run.api.services.AccountService;
-import jp.co.run.api.util.CommonUitl;
 
+/**
+ * The Class AccountServiceImpl.
+ */
 @Service
 public class AccountServiceImpl implements AccountService {
 
+    /** The account dao. */
     @Autowired
     private AccountDao accountDao;
 
-    @Override
-    public AccountDto login(LoginRequest loginRequest) throws Exception {
+    /** The md. */
+    private static MessageDigest md = null;
 
-        AccountDto accountDto = null;
+    /* (non-Javadoc)
+     * @see jp.co.run.api.services.AccountService#login(jp.co.run.api.request.data.LoginRequest)
+     */
+    @Override
+    public CommonListResponseData login(LoginRequest loginRequest) throws Exception {
+
+        AccountRespone accountDto = null;
         // Get record when login
         accountDto = accountDao.getAccountLogin(loginRequest.getUserName());
         // Check password when login
-        boolean checkPass = SHA1Encryption.validatePassword(loginRequest.getPassword(), accountDto.getPassword());
+        boolean checkPass = checkPassword(changeHash(loginRequest.getPassword()), accountDto.getPassword());
         if (!checkPass) {
             throw new CheckPasswordFailureException("");
         }
-        return accountDto;
+        List<AccountRespone> listAccount = new ArrayList<>();
+        listAccount.add(accountDto);
+        CommonListResponseData responseData = new CommonListResponseData();
+        responseData.setResultList(listAccount);
+        return responseData;
     }
 
+    /* (non-Javadoc)
+     * @see jp.co.run.api.services.AccountService#regist(jp.co.run.api.request.data.AccountRegistRequest)
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int regist(AccountRegistRequest request) throws Exception {
@@ -46,11 +66,11 @@ public class AccountServiceImpl implements AccountService {
         }
 
         // Check password
-        boolean isCheckPass = CommonUitl.checkPassword(request.getPassword(), request.getConfirmPassword());
+        boolean isCheckPass = checkPassword(request.getPassword(), request.getConfirmPassword());
 
         if (isCheckPass) {
             // Encode for password
-            String password = SHA1Encryption.generateStorngPasswordHash(request.getPassword());
+            String password = changeHash(request.getPassword());
             request.setPassword(password);
 
             // Insert data to table userInfo
@@ -66,5 +86,49 @@ public class AccountServiceImpl implements AccountService {
             return countAccount;
         }
         throw new InsertFailureException("Password with confirm password have diffrent.");
+    }
+
+    /**
+     * Change hash.
+     *
+     * @param data the data
+     * @return the string
+     */
+    private String changeHash(String data) {
+        StringBuilder sb = new StringBuilder();
+        try {
+            if (md == null) {
+                md = MessageDigest.getInstance("SHA-256");
+            }
+            data += "cafe";
+            md.update(data.getBytes());
+            byte[] hash = md.digest();
+            for (byte b : hash) {
+                sb.append(String.format("%02x", b));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        String dataHash = sb.toString();
+        return dataHash;
+    }
+
+    /**
+     * Check password.
+     *
+     * @param password the password
+     * @param confirmPassword the confirm password
+     * @return true, if successful
+     */
+    private boolean checkPassword(String password, String confirmPassword) {
+
+        if (password == null || confirmPassword == null) {
+            return false;
+        } else {
+            if (password.equals(confirmPassword)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

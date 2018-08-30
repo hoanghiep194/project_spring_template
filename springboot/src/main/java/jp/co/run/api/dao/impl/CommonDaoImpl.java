@@ -73,10 +73,7 @@ public class CommonDaoImpl implements CommonDao {
      */
     @Override
     @SuppressWarnings({ "unchecked", "deprecation" })
-    public <T> List<T> select(String pathSql, Class<T> clzz, Map<String, Object> param) throws Exception {
-
-        // Get content of sql
-        String sqlQuery = SqlFileReaderUtil.getSql(pathSql);
+    public <T> List<T> select(String sqlQuery, Class<T> clzz, Map<String, Object> param) throws Exception {
 
         Session session = sessionFactory.getCurrentSession();
         Query<T> query = session.createNativeQuery(sqlQuery).setResultTransformer(Transformers.aliasToBean(clzz));

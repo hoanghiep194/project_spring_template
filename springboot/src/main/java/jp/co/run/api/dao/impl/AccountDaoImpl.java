@@ -13,10 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 import jp.co.run.api.common.Constants;
 import jp.co.run.api.dao.AccountDao;
 import jp.co.run.api.dao.CommonDao;
-import jp.co.run.api.dto.account.AccountDto;
 import jp.co.run.api.entity.AccountEntity;
 import jp.co.run.api.exception.InsertDataAlreadyExistException;
 import jp.co.run.api.request.data.AccountRegistRequest;
+import jp.co.run.api.response.data.AccountRespone;
 import jp.co.run.api.util.CommonUitl;
 
 /**
@@ -48,13 +48,13 @@ public class AccountDaoImpl implements AccountDao {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public AccountDto getAccountLogin(String userName) throws Exception {
+    public AccountRespone getAccountLogin(String userName) throws Exception {
 
-        AccountDto accountDto = null;
+        AccountRespone accountDto = null;
         Map<String, Object> mapParam = new HashMap<String, Object>();
         mapParam.put("userName", userName);
 
-        List<AccountDto> listAccount = commonDao.select(SQL_SELECT_ACCOUNT, AccountDto.class, mapParam);
+        List<AccountRespone> listAccount = commonDao.select(SQL_SELECT_ACCOUNT, AccountRespone.class, mapParam);
         if(listAccount.size() > 0) {
             accountDto = listAccount.get(0);
         }
