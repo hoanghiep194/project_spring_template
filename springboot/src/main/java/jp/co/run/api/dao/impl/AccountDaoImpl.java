@@ -13,11 +13,14 @@ import org.springframework.transaction.annotation.Transactional;
 import jp.co.run.api.common.Constants;
 import jp.co.run.api.dao.AccountDao;
 import jp.co.run.api.dao.CommonDao;
+import jp.co.run.api.dto.account.AccountDto;
+import jp.co.run.api.dto.account.UserInfoDto;
 import jp.co.run.api.entity.AccountEntity;
 import jp.co.run.api.exception.InsertDataAlreadyExistException;
 import jp.co.run.api.request.data.AccountRegistRequest;
-import jp.co.run.api.response.data.AccountRespone;
+import jp.co.run.api.response.data.AccountResponeData;
 import jp.co.run.api.util.CommonUitl;
+import jp.co.run.api.util.SqlFileReaderUtil;
 
 /**
  * The Class AccountDaoImpl.
@@ -41,6 +44,9 @@ public class AccountDaoImpl implements AccountDao {
     /** The Constant SQL_INSERT_USER_INFO. */
     private static final String SQL_INSERT_USER_INFO = "/account/insert_user.sql";
 
+    private static final String SQL_SELECT_ALL_ACCOUNT = "/account/select_all_account.sql";
+
+    private static final String SQL_SELECT_USER_INFO = "/account/select_user_info.sql";
     /*
      * (non-Javadoc)
      *
@@ -48,13 +54,13 @@ public class AccountDaoImpl implements AccountDao {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public AccountRespone getAccountLogin(String userName) throws Exception {
+    public AccountResponeData getAccountLogin(String userName) throws Exception {
 
-        AccountRespone accountDto = null;
+        AccountResponeData accountDto = null;
         Map<String, Object> mapParam = new HashMap<String, Object>();
         mapParam.put("userName", userName);
 
-        List<AccountRespone> listAccount = commonDao.select(SQL_SELECT_ACCOUNT, AccountRespone.class, mapParam);
+        List<AccountResponeData> listAccount = commonDao.select(SQL_SELECT_ACCOUNT, AccountResponeData.class, mapParam);
         if(listAccount.size() > 0) {
             accountDto = listAccount.get(0);
         }
@@ -146,6 +152,30 @@ public class AccountDaoImpl implements AccountDao {
         mapParam.put("userName", accountRegistRequest.getUserName());
 
         return commonDao.select(SQL_SELECT_ACCOUNT_BY_USER_NAME, mapParam);
+    }
+
+    @Override
+    public List<AccountDto> getListAccount() throws Exception {
+
+        // Get content of sql
+        String sqlQuery = SqlFileReaderUtil.getSql(SQL_SELECT_ALL_ACCOUNT);
+        Map<String, Object> mapParam = new HashMap<String, Object>();
+        return commonDao.select(sqlQuery, AccountDto.class, mapParam);
+    }
+
+    @Override
+    public UserInfoDto getDetailUserInfo(String userName) throws Exception {
+
+        // Get content of sql
+        String sqlQuery = SqlFileReaderUtil.getSql(SQL_SELECT_USER_INFO);
+        Map<String, Object> mapParam = new HashMap<String, Object>();
+        mapParam.put("userName", userName);
+
+        List<UserInfoDto> userInfoList = commonDao.select(sqlQuery, UserInfoDto.class, mapParam);
+        if(userInfoList.size() > 0) {
+            return userInfoList.get(0);
+        }
+        return null;
     }
 
 }

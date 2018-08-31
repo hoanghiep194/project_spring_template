@@ -14,7 +14,7 @@ import jp.co.run.api.exception.InsertDataAlreadyExistException;
 import jp.co.run.api.exception.InsertFailureException;
 import jp.co.run.api.request.data.AccountRegistRequest;
 import jp.co.run.api.request.data.LoginRequest;
-import jp.co.run.api.response.data.AccountRespone;
+import jp.co.run.api.response.data.AccountResponeData;
 import jp.co.run.api.response.data.CommonListResponseData;
 import jp.co.run.api.services.AccountService;
 
@@ -37,7 +37,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public CommonListResponseData login(LoginRequest loginRequest) throws Exception {
 
-        AccountRespone accountDto = null;
+        AccountResponeData accountDto = null;
         // Get record when login
         accountDto = accountDao.getAccountLogin(loginRequest.getUserName());
         // Check password when login
@@ -45,7 +45,7 @@ public class AccountServiceImpl implements AccountService {
         if (!checkPass) {
             throw new CheckPasswordFailureException("");
         }
-        List<AccountRespone> listAccount = new ArrayList<>();
+        List<AccountResponeData> listAccount = new ArrayList<>();
         listAccount.add(accountDto);
         CommonListResponseData responseData = new CommonListResponseData();
         responseData.setResultList(listAccount);
