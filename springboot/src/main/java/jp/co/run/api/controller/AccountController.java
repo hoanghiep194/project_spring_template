@@ -1,12 +1,17 @@
 package jp.co.run.api.controller;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import jp.co.run.api.controller.AbstractController;
+import jp.co.run.api.exception.CheckAuthInvalidException;
+import jp.co.run.api.exception.CheckTokenExpiredException;
 import jp.co.run.api.request.data.AccountRegistRequest;
 import jp.co.run.api.request.data.LoginRequest;
 import jp.co.run.api.response.ApiResponse;
@@ -23,6 +28,21 @@ public class AccountController extends AbstractController {
     @Autowired
     private AccountService accountService;
 
+    private String sessionToken;
+    
+    @InitBinder
+    public void initBinder(WebDataBinder binder, HttpServletRequest request)
+            throws CheckAuthInvalidException, CheckTokenExpiredException {
+
+        String endPoint = request.getServletPath();
+        if (endPoint.startsWith("/account/login")) {
+            return;
+        }
+
+        // authチェック
+        String sessionToken = request.getHeader("Authorization");
+        this.sessionToken = sessionToken;
+    }
     /**
      * Login.
      *

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import jp.co.run.api.common.DescriptionCode;
+import jp.co.run.api.common.LoggerUtils;
 import jp.co.run.api.common.ResultType;
 import jp.co.run.api.exception.ExceptionCustom;
 import jp.co.run.api.exception.ParametersInvalidException;
@@ -21,9 +22,6 @@ import jp.co.run.api.response.ApiResponse;
  */
 @ControllerAdvice
 public class ExceptionControllerAdvice {
-
-    /** The Constant logger. */
-    private static final Logger logger = LoggerFactory.getLogger(ExceptionControllerAdvice.class);
 
     /**
      * Inits the binder.
@@ -62,7 +60,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(ExceptionCustom.class)
     public @ResponseBody ApiResponse exception(ExceptionCustom e) {
 
-        logger.error(e.getMessage(), e);
+        LoggerUtils.logError(this, e);
         Integer status = e.getStatus();
         String type = e.getType();
         String description = e.getDescriptionCode().getMessage(e.getDescriptionSub());
@@ -83,7 +81,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(Exception.class)
     public @ResponseBody ApiResponse exception(Exception e) {
 
-        logger.error(e.getMessage(), e);
+        LoggerUtils.logError(this, e);
         Integer status = ResultType.INTERNAL_SERVER_ERROR.getStatus();
         String type = ResultType.INTERNAL_SERVER_ERROR.getType();
         String description = DescriptionCode.SYSTE_ERROR.getMessage();

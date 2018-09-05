@@ -18,7 +18,6 @@ import jp.co.run.api.dto.account.UserInfoDto;
 import jp.co.run.api.entity.AccountEntity;
 import jp.co.run.api.exception.InsertDataAlreadyExistException;
 import jp.co.run.api.request.data.AccountRegistRequest;
-import jp.co.run.api.response.data.AccountResponeData;
 import jp.co.run.api.util.CommonUitl;
 import jp.co.run.api.util.SqlFileReaderUtil;
 
@@ -54,13 +53,13 @@ public class AccountDaoImpl implements AccountDao {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public AccountResponeData getAccountLogin(String userName) throws Exception {
+    public AccountDto getAccountLogin(String userName) throws Exception {
 
-        AccountResponeData accountDto = null;
+        AccountDto accountDto = null;
         Map<String, Object> mapParam = new HashMap<String, Object>();
         mapParam.put("userName", userName);
 
-        List<AccountResponeData> listAccount = commonDao.select(SQL_SELECT_ACCOUNT, AccountResponeData.class, mapParam);
+        List<AccountDto> listAccount = commonDao.select(SQL_SELECT_ACCOUNT, AccountDto.class, mapParam);
         if(listAccount.size() > 0) {
             accountDto = listAccount.get(0);
         }
@@ -97,6 +96,9 @@ public class AccountDaoImpl implements AccountDao {
     @Override
     public int insertUserInfo(AccountRegistRequest accountRegistRequest) throws Exception {
 
+        // Get content of sql
+        String sqlQuery = SqlFileReaderUtil.getSql(SQL_INSERT_USER_INFO);
+        
         Map<String, Object> mapParam = new HashMap<String, Object>();
         mapParam.put("userName", accountRegistRequest.getUserName());
         mapParam.put("firstName", accountRegistRequest.getFirstName());
@@ -114,7 +116,7 @@ public class AccountDaoImpl implements AccountDao {
         mapParam.put("updateTime", null);
         mapParam.put("deleteFlag", 0);
 
-        return commonDao.insert(SQL_INSERT_USER_INFO, BigInteger.class, mapParam);
+        return commonDao.insert(sqlQuery, BigInteger.class, mapParam);
     }
 
     /*

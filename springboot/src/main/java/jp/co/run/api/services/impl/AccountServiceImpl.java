@@ -2,13 +2,16 @@ package jp.co.run.api.services.impl;
 
 import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jp.co.run.api.dao.AccountDao;
+import jp.co.run.api.dto.account.AccountDto;
 import jp.co.run.api.exception.CheckPasswordFailureException;
 import jp.co.run.api.exception.InsertDataAlreadyExistException;
 import jp.co.run.api.exception.InsertFailureException;
@@ -17,6 +20,7 @@ import jp.co.run.api.request.data.LoginRequest;
 import jp.co.run.api.response.data.AccountResponeData;
 import jp.co.run.api.response.data.CommonListResponseData;
 import jp.co.run.api.services.AccountService;
+import jp.co.run.api.services.SessionInfoService;
 
 /**
  * The Class AccountServiceImpl.
@@ -28,6 +32,9 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private AccountDao accountDao;
 
+    @Autowired
+    private SessionInfoService sessioService;
+    
     /** The md. */
     private static MessageDigest md = null;
 
@@ -37,16 +44,28 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public CommonListResponseData login(LoginRequest loginRequest) throws Exception {
 
-        AccountResponeData accountDto = null;
+        String userName = loginRequest.getUserName();
+        String password = loginRequest.getPassword();
         // Get record when login
-        accountDto = accountDao.getAccountLogin(loginRequest.getUserName());
+        AccountDto accountDto = accountDao.getAccountLogin(userName);
         // Check password when login
-        boolean checkPass = checkPassword(changeHash(loginRequest.getPassword()), accountDto.getPassword());
+        boolean checkPass = checkPassword(changeHash(password), accountDto.getPassword());
+        
         if (!checkPass) {
-            throw new CheckPasswordFailureException("");
+            throw new CheckPasswordFailureException("aa");
         }
-        List<AccountResponeData> listAccount = new ArrayList<>();
-        listAccount.add(accountDto);
+        
+        String token = createToken(userName);
+        // Insert token
+        sessioService.registToken(loginRequest, token);
+        
+        List<AccountResponeData> listAccount = new ArrayList<AccountResponeData>();
+        AccountResponeData responeData = new AccountResponeData();
+        responeData.setSessionToken(token);
+        
+        BeanUtils.copyProperties(accountDto, responeData);
+        listAccount.add(responeData);
+        
         CommonListResponseData responseData = new CommonListResponseData();
         responseData.setResultList(listAccount);
         return responseData;
@@ -130,5 +149,18 @@ public class AccountServiceImpl implements AccountService {
             }
         }
         return false;
+    }
+    
+    /**
+     * token生成
+     * @param loginId
+     * @return
+     */
+    private String createToken(String userName) {
+        // loginId+日付をhash化
+        Date dt = new Date();
+        String nowTime = String.valueOf(dt.getTime());
+        String tokenTmp = userName + nowTime;
+        return changeHash(tokenTmp);
     }
 }

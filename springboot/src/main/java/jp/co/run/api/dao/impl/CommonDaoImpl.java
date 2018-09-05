@@ -45,11 +45,9 @@ public class CommonDaoImpl implements CommonDao {
 
     @SuppressWarnings({ "deprecation", "unchecked" })
     @Override
-    public <T> int insert(String pathSql, Class<T> clzz, Map<String, Object> param) throws Exception {
+    public <T> int insert(String sqlQuery, Class<T> clzz, Map<String, Object> param) throws Exception {
 
         try {
-            // Get content of sql
-            String sqlQuery = SqlFileReaderUtil.getSql(pathSql);
             Session session = sessionFactory.getCurrentSession();
             Query<T> query = session.createNativeQuery(sqlQuery).setResultTransformer(Transformers.aliasToBean(clzz));
 

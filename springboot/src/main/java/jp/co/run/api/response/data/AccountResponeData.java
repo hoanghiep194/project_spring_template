@@ -25,4 +25,7 @@ public class AccountResponeData {
     /** The last name. */
     @JsonProperty("last_name")
     private String lastName;
+    
+    @JsonProperty("session_token")
+    private String sessionToken;
 }

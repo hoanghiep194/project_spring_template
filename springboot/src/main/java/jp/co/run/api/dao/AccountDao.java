@@ -6,7 +6,6 @@ import jp.co.run.api.dto.account.AccountDto;
 import jp.co.run.api.dto.account.UserInfoDto;
 import jp.co.run.api.entity.AccountEntity;
 import jp.co.run.api.request.data.AccountRegistRequest;
-import jp.co.run.api.response.data.AccountResponeData;
 
 /**
  * The Interface AccountDao.
@@ -20,7 +19,7 @@ public interface AccountDao {
      * @return the account login
      * @throws Exception the exception
      */
-    public AccountResponeData getAccountLogin(final String userName) throws Exception;
+    public AccountDto getAccountLogin(final String userName) throws Exception;
 
     /**
      * Insert.
