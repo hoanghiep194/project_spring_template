@@ -6,7 +6,9 @@
     <session-factory>
         <property name="show_sql">true</property>
         <property name="format_sql">true</property>
-        <property name="hibernate.connection.autocommit">false</property> 
+        <property name="hibernate.connection.autocommit">false</property>
+        <!-- Defines the SQL dialect used in Hiberante's application -->
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
         <mapping class="jp.co.run.api.entity.AccountEntity" />
     </session-factory>
 </hibernate-configuration>
