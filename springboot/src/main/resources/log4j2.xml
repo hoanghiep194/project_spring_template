@@ -1,67 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration>
-	<Properties>
-		<Property name="log-path">applogs</Property>
-	</Properties>
-	<Appenders>
-		<!-- Console Appender -->
-		<Console name="Console-Appender" target="SYSTEM_OUT">
-			<PatternLayout
-				pattern="%d{dd-MM-yyyy HH:mm:ss.SSS a} %-5level %logger.%M - %msg%n" />
-		</Console>
-<!-- 		
-		<File name="File" fileName="${log-path}/app.log">
-			<PatternLayout
-				pattern="%d{dd-MM-yyyy HH:mm:ss.SSS a} %-5level %logger.%M - %msg%n" />
-		</File> -->
+    <Properties>
+        <Property name="log-path">applogs</Property>
+    </Properties>
+    <Appenders>
+        <!-- Console Appender -->
+        <Console name="Console-Appender" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{dd-MM-yyyy HH:mm:ss.SSS a} %-5level %logger - %msg%n" />
+        </Console>
 
-		<!-- Rolling File Appender -->
-		<RollingFile name="RollingFile">
-			<FileName>${log-path}/app.log</FileName>
-			<FilePattern>${log-path}/app.log.%d{yyyy-MM-dd}</FilePattern>
-			<PatternLayout>
-				<Pattern>%d{dd-MM-yyyy HH:mm:ss.SSS a} %-5level %logger.%M - %msg%n</Pattern>
-			</PatternLayout>
-			<Policies>
-				<TimeBasedTriggeringPolicy interval="1" modulate="true" />
-			</Policies>
-			<DefaultRolloverStrategy max="5" />
-		</RollingFile>
+        <!-- Rolling File Appender -->
+        <RollingFile name="RollingFile">
+            <FileName>${log-path}/app.log</FileName>
+            <FilePattern>${log-path}/app.log.%d{yyyy-MM-dd}</FilePattern>
+            <PatternLayout>
+                <Pattern>%d{dd-MM-yyyy HH:mm:ss.SSS a} %-5level %logger - %msg%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+            </Policies>
+            <DefaultRolloverStrategy max="5" />
+        </RollingFile>
 
-		<File name="SpringBoot-Program"
-			fileName="${log-path}/springboot_program.log">
-			<PatternLayout>
-				<pattern>
-					%d{dd-MM-yyyy HH:mm:ss.SSS a} %-5level %logger.%M - %msg%n
-				</pattern>
-			</PatternLayout>
-		</File>
-	</Appenders>
+        <File name="SpringBoot-Program" fileName="${log-path}/springboot_program.log">
+            <PatternLayout>
+                <pattern>
+                    %d{dd-MM-yyyy HH:mm:ss.SSS a} %-5level %logger- %msg%n
+                </pattern>
+            </PatternLayout>
+        </File>
+    </Appenders>
 
-	<Loggers>
-		<!-- Log everything in custom package -->
-		<Logger name="jp.co.run.api" level="debug" additivity="false">
-			<AppenderRef ref="Console-Appender" />
-			<AppenderRef ref="RollingFile" />
-		</Logger>
+    <Loggers>
+        <!-- Log everything in custom package -->
+        <Logger name="jp.co.run.api" level="debug" additivity="false">
+            <AppenderRef ref="Console-Appender" />
+            <AppenderRef ref="RollingFile" />
+        </Logger>
 
-		<!-- Log everything in Spring Boot -->
-		<Logger name="org.springframework.boot" level="debug"
-			additivity="false">
-			<AppenderRef ref="Console-Appender" />
-			<AppenderRef ref="SpringBoot-Program" />
-		</Logger>
-		<!-- Log everything in Spring Core -->
-		<Logger name="org.springframework.core" level="debug"
-			additivity="false">
-			<AppenderRef ref="Console-Appender" />
-			<AppenderRef ref="SpringBoot-Program" />
-		</Logger>
+        <!-- Log everything in Spring Boot -->
+        <Logger name="org.springframework.boot" level="debug" additivity="false">
+            <AppenderRef ref="Console-Appender" />
+            <AppenderRef ref="SpringBoot-Program" />
+        </Logger>
+        <!-- Log everything in Spring Core -->
+        <Logger name="org.springframework.core" level="debug" additivity="false">
+            <AppenderRef ref="Console-Appender" />
+            <AppenderRef ref="SpringBoot-Program" />
+        </Logger>
 
-		<Root>
-			<AppenderRef ref="Console-Appender" />
-			<AppenderRef ref="SpringBoot-Program" />
-		</Root>
-	</Loggers>
+        <Root>
+            <AppenderRef ref="Console-Appender" />
+            <AppenderRef ref="SpringBoot-Program" />
+        </Root>
+    </Loggers>
 
 </Configuration>

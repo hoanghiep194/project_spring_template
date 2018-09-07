@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import jp.co.run.api.dto.product.ProductDto;
 import lombok.Data;
 
 /**

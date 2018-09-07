@@ -11,9 +11,10 @@ import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import jp.co.run.api.common.LoggerUtils;
 import jp.co.run.api.dao.CommonDao;
 import jp.co.run.api.exception.InsertFailureException;
-import jp.co.run.api.util.SqlFileReaderUtil;
+import jp.co.run.api.exception.UpdateFailureException;
 
 /**
  * The Class CommonDaoImpl.
@@ -39,6 +40,7 @@ public class CommonDaoImpl implements CommonDao {
             session.save(entity);
         } catch (Exception e) {
             e.printStackTrace();
+            LoggerUtils.logError(this, e);
             throw new InsertFailureException("Failed by insert error");
         }
     }
@@ -59,6 +61,7 @@ public class CommonDaoImpl implements CommonDao {
             return query.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
+            LoggerUtils.logError(this, e);
             throw new InsertFailureException("Failed by insert error");
         }
     }
@@ -92,10 +95,8 @@ public class CommonDaoImpl implements CommonDao {
      */
     @Override
     @SuppressWarnings("unchecked")
-    public <T> int select(String pathSql, Map<String, Object> param) throws Exception {
+    public <T> int select(String sqlQuery, Map<String, Object> param) throws Exception {
 
-        // Get content of sql
-        String sqlQuery = SqlFileReaderUtil.getSql(pathSql);
         Session session = sessionFactory.getCurrentSession();
         Query<BigInteger> query = session.createNativeQuery(sqlQuery);
 
@@ -110,6 +111,27 @@ public class CommonDaoImpl implements CommonDao {
         }
 
         return resultList.get(0).intValue();
+    }
+
+    @SuppressWarnings({ "unchecked", "deprecation" })
+    @Override
+    public <T> int update(String sqlQuery, Class<T> clzz, Map<String, Object> param) throws Exception {
+
+        try {
+            Session session = sessionFactory.getCurrentSession();
+            Query<T> query = session.createNativeQuery(sqlQuery).setResultTransformer(Transformers.aliasToBean(clzz));
+
+            for (Map.Entry<String, Object> map : param.entrySet()) {
+                // Set value for parameter
+                query.setParameter(map.getKey(), map.getValue());
+            }
+
+            return query.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+            LoggerUtils.logError(this, e);
+            throw new UpdateFailureException("Failed by update error");
+        }
     }
 
 }

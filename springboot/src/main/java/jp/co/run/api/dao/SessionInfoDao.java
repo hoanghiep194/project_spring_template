@@ -1,12 +1,15 @@
 package jp.co.run.api.dao;
 
+import java.util.Date;
+
+import jp.co.run.api.dto.session.SessionInfoDto;
 import jp.co.run.api.request.data.LoginRequest;
 
 /**
  * The Interface SessionInfoDao.
  */
 public interface SessionInfoDao {
-    
+
     /**
      * Regist token.
      *
@@ -15,7 +18,7 @@ public interface SessionInfoDao {
      * @return the int
      * @throws Exception the exception
      */
-    public int registToken(final LoginRequest request, final String token) throws Exception;
+    public int registToken(final LoginRequest request, final String token, final Date expiredAt) throws Exception;
 
     /**
      * Update token.
@@ -25,7 +28,7 @@ public interface SessionInfoDao {
      * @return the int
      * @throws Exception the exception
      */
-    public int updateToken(final LoginRequest request, final String token) throws Exception;
+    public int updateToken(final LoginRequest request, final String token, final Date expiredAt) throws Exception;
 
     /**
      * Gets the token by user.
@@ -34,5 +37,7 @@ public interface SessionInfoDao {
      * @return the token by user
      * @throws Exception the exception
      */
-    public int getTokenByUser(final LoginRequest request) throws Exception;
+    public int getTokenByUser(final String userName) throws Exception;
+
+    public SessionInfoDto getSessionInfoByToken (final String token) throws Exception;
 }

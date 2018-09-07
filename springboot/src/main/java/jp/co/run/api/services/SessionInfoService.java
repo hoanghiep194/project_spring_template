@@ -1,13 +1,14 @@
 package jp.co.run.api.services;
 
-import jp.co.run.api.dto.session.SessionInfoDto;
+import java.util.Date;
+
 import jp.co.run.api.request.data.LoginRequest;
 
 /**
  * The Interface SessionInfoService.
  */
 public interface SessionInfoService {
-    
+
     /**
      * Auth by token.
      *
@@ -15,7 +16,7 @@ public interface SessionInfoService {
      * @return the session info dto
      * @throws Exception the exception
      */
-    public SessionInfoDto authByToken(String sessionToken) throws Exception;
+    public void authByToken(final String sessionToken) throws Exception;
 
     /**
      * Regist token.
@@ -25,7 +26,7 @@ public interface SessionInfoService {
      * @return the int
      * @throws Exception the exception
      */
-    public int registToken(LoginRequest request, String token) throws Exception;
+    public int registToken(final LoginRequest request,final String token, final Date expiredAt) throws Exception;
 
     /**
      * Update token.
@@ -35,7 +36,7 @@ public interface SessionInfoService {
      * @return the int
      * @throws Exception the exception
      */
-    public int updateToken(LoginRequest request, String token) throws Exception;
+    public int updateToken(final LoginRequest request,final String token, final Date expiredAt) throws Exception;
 
     /**
      * Gets the token by user.
@@ -44,5 +45,5 @@ public interface SessionInfoService {
      * @return the token by user
      * @throws Exception the exception
      */
-    public boolean getTokenByUser(final LoginRequest request) throws Exception;
+    public boolean getTokenByUser(final String userName) throws Exception;
 }

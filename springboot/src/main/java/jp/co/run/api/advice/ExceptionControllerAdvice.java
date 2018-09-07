@@ -60,7 +60,6 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(ExceptionCustom.class)
     public @ResponseBody ApiResponse exception(ExceptionCustom e) {
 
-        LoggerUtils.logError(this, e);
         Integer status = e.getStatus();
         String type = e.getType();
         String description = e.getDescriptionCode().getMessage(e.getDescriptionSub());
@@ -81,7 +80,6 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(Exception.class)
     public @ResponseBody ApiResponse exception(Exception e) {
 
-        LoggerUtils.logError(this, e);
         Integer status = ResultType.INTERNAL_SERVER_ERROR.getStatus();
         String type = ResultType.INTERNAL_SERVER_ERROR.getType();
         String description = DescriptionCode.SYSTE_ERROR.getMessage();

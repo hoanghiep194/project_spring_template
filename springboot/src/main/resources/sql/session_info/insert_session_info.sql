@@ -1,5 +1,6 @@
-INSERT INTO sessionInfo
-        (user_name,
+INSERT INTO session_info
+        (customer_id,
+         user_name,
          session_token,
          session_expired,
          regist_user,
@@ -7,11 +8,12 @@ INSERT INTO sessionInfo
          update_user,
          update_time,
          delete_flag)
-VALUES (:userName,
+VALUES (:customerId,
+        :userName,
         :sessionToken,
         :sessionExpired,
         :registUser,
         :registTime,
         :updateUser,
         :updateTime,
-        :deleteFlag;
+        :deleteFlag)

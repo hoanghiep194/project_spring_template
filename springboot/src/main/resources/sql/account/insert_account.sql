@@ -1,5 +1,7 @@
 INSERT INTO account
-        (user_name,
+        (customer_id,
+         user_name,
+         password,
          expiry_date,
          delete_expired_account,
          role_id,
@@ -9,7 +11,9 @@ INSERT INTO account
          update_time,
          delete_flag)
 
-VALUES (:userName,
+VALUES (:customerId,
+        :userName,
+        :password,
         :expiryDate,
         :deleteExpiredAccount,
         :roleId,

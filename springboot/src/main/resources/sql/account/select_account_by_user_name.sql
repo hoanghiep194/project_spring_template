@@ -1,5 +1,5 @@
 SELECT count(*)
 FROM account acc
-INNER JOIN userInfo us ON acc.user_name = us.user_name
+INNER JOIN customer cs ON acc.customer_id = cs.customer_id
 WHERE acc.user_name=:userName
     AND acc.delete_flag=0

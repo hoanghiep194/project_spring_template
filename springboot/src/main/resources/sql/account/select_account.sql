@@ -1,10 +1,10 @@
 SELECT acc.user_name    AS userName,
-       us.password      AS password,
+       acc.password     AS password,
        acc.role_id      AS roleId,
-       us.first_name    AS firstName,
-       us.last_name     AS lastName
+       cs.first_name    AS firstName,
+       cs.last_name     AS lastName,
+       cs.customer_id   AS customerId
 FROM account acc
-INNER JOIN userInfo us ON acc.user_name = us.user_name
-AND acc.delete_flag = us.delete_flag
+INNER JOIN customer cs ON acc.customer_id = cs.customer_id
+AND acc.delete_flag = 0 and c.delete_flag = 0
 WHERE acc.user_name=:userName
-    AND acc.delete_flag=0

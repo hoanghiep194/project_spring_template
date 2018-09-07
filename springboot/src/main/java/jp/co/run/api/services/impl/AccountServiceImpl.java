@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jp.co.run.api.dao.AccountDao;
+import jp.co.run.api.dao.CustomerDao;
 import jp.co.run.api.dto.account.AccountDto;
 import jp.co.run.api.exception.CheckPasswordFailureException;
 import jp.co.run.api.exception.InsertDataAlreadyExistException;
@@ -33,8 +34,11 @@ public class AccountServiceImpl implements AccountService {
     private AccountDao accountDao;
 
     @Autowired
+    private CustomerDao customerDao;
+
+    @Autowired
     private SessionInfoService sessioService;
-    
+
     /** The md. */
     private static MessageDigest md = null;
 
@@ -42,6 +46,7 @@ public class AccountServiceImpl implements AccountService {
      * @see jp.co.run.api.services.AccountService#login(jp.co.run.api.request.data.LoginRequest)
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public CommonListResponseData login(LoginRequest loginRequest) throws Exception {
 
         String userName = loginRequest.getUserName();
@@ -50,22 +55,33 @@ public class AccountServiceImpl implements AccountService {
         AccountDto accountDto = accountDao.getAccountLogin(userName);
         // Check password when login
         boolean checkPass = checkPassword(changeHash(password), accountDto.getPassword());
-        
+
         if (!checkPass) {
             throw new CheckPasswordFailureException("aa");
         }
-        
+        // Create token
         String token = createToken(userName);
-        // Insert token
-        sessioService.registToken(loginRequest, token);
-        
+
+        Date nowDate = new Date();
+        Long nowDateLong = nowDate.getTime();
+        Long expiredAtLong = nowDateLong;
+        Date expiredAt = new Date(expiredAtLong);
+
+        if(sessioService.getTokenByUser(userName)) {
+            // Update token
+            sessioService.updateToken(loginRequest, token, expiredAt);
+        } else {
+            // Insert token
+            sessioService.registToken(loginRequest, token, expiredAt);
+        }
+
         List<AccountResponeData> listAccount = new ArrayList<AccountResponeData>();
         AccountResponeData responeData = new AccountResponeData();
         responeData.setSessionToken(token);
-        
+
         BeanUtils.copyProperties(accountDto, responeData);
         listAccount.add(responeData);
-        
+
         CommonListResponseData responseData = new CommonListResponseData();
         responseData.setResultList(listAccount);
         return responseData;
@@ -79,7 +95,7 @@ public class AccountServiceImpl implements AccountService {
     public int regist(AccountRegistRequest request) throws Exception {
 
         // Check record exists
-        int record = accountDao.select(request);
+        int record = accountDao.getAccountByUserName(request);
         if (record > 0) {
             throw new InsertDataAlreadyExistException("ユーザー名" + request.getUserName() + "は、既に登録されています。");
         }
@@ -92,19 +108,24 @@ public class AccountServiceImpl implements AccountService {
             String password = changeHash(request.getPassword());
             request.setPassword(password);
 
-            // Insert data to table userInfo
-            int countUserInfo = accountDao.insertUserInfo(request);
-            if (countUserInfo == 0) {
+            // Create customer id
+            String customerId = generateCustomerId(customerDao.countCustomer());
+
+            // Insert data to table customer
+            int countCustomer = customerDao.insertCustomer(request, customerId);
+            if (countCustomer == 0) {
                 throw new InsertFailureException("Failed by insert error");
             }
+
             // Insert data to table account
-            int countAccount = accountDao.insertAccount(request.getUserName());
+            int countAccount = accountDao.insertAccount(request, customerId);
             if (countAccount == 0) {
                 throw new InsertFailureException("Failed by insert error");
             }
+
             return countAccount;
         }
-        throw new InsertFailureException("Password with confirm password have diffrent.");
+        throw new CheckPasswordFailureException("Password with confirm password have diffrent.");
     }
 
     /**
@@ -150,7 +171,7 @@ public class AccountServiceImpl implements AccountService {
         }
         return false;
     }
-    
+
     /**
      * token生成
      * @param loginId
@@ -162,5 +183,30 @@ public class AccountServiceImpl implements AccountService {
         String nowTime = String.valueOf(dt.getTime());
         String tokenTmp = userName + nowTime;
         return changeHash(tokenTmp);
+    }
+
+    /**
+     * Generate customer id.
+     *
+     * @param number
+     *            the number
+     * @return the string
+     */
+    private String generateCustomerId(int number) {
+
+        String format = "0000000";
+        StringBuffer customerId = new StringBuffer();
+        customerId.append("CUS");
+        if (number >= format.length()) {
+            customerId.append(String.valueOf(number));
+        } else {
+            int count = format.length() - number;
+            for (int i = 0; i < count; i++) {
+                customerId.append("0");
+            }
+            customerId.append(String.valueOf(number));
+        }
+
+        return customerId.toString();
     }
 }

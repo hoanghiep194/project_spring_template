@@ -30,22 +30,13 @@ public interface AccountDao {
     public void insert (final AccountEntity accountEntity) throws Exception;
 
     /**
-     * Insert user info.
-     *
-     * @param accountRegistRequest the account regist request
-     * @return the int
-     * @throws Exception the exception
-     */
-    public int insertUserInfo(final AccountRegistRequest accountRegistRequest) throws Exception;
-
-    /**
      * Insert account.
      *
      * @param userName the user name
      * @return the int
      * @throws Exception the exception
      */
-    public int insertAccount(final String userName) throws Exception;
+    public int insertAccount(final AccountRegistRequest request, final String customerId) throws Exception;
 
     /**
      * Select.
@@ -54,7 +45,7 @@ public interface AccountDao {
      * @return the int
      * @throws Exception the exception
      */
-    public int select(final AccountRegistRequest accountRegistRequest) throws Exception;
+    public int getAccountByUserName(final AccountRegistRequest accountRegistRequest) throws Exception;
 
     /**
      * Gets the list account.

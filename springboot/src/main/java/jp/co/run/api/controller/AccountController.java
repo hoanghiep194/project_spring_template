@@ -10,12 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import jp.co.run.api.exception.CheckAuthInvalidException;
-import jp.co.run.api.exception.CheckTokenExpiredException;
 import jp.co.run.api.request.data.AccountRegistRequest;
 import jp.co.run.api.request.data.LoginRequest;
 import jp.co.run.api.response.ApiResponse;
 import jp.co.run.api.services.AccountService;
+import jp.co.run.api.services.SessionInfoService;
 
 /**
  * The Class AccountController.
@@ -28,27 +27,32 @@ public class AccountController extends AbstractController {
     @Autowired
     private AccountService accountService;
 
+    @Autowired
+    private SessionInfoService sessionInfoService;
+
     private String sessionToken;
-    
+
     @InitBinder
-    public void initBinder(WebDataBinder binder, HttpServletRequest request)
-            throws CheckAuthInvalidException, CheckTokenExpiredException {
+    public void initBinder(WebDataBinder binder, HttpServletRequest request) throws Exception {
 
         String endPoint = request.getServletPath();
-        if (endPoint.startsWith("/account/login")) {
+        if (endPoint.startsWith("/account/login") || endPoint.startsWith("/account/regist")) {
             return;
         }
-
         // authチェック
         String sessionToken = request.getHeader("Authorization");
+        sessionInfoService.authByToken(sessionToken);
         this.sessionToken = sessionToken;
     }
+
     /**
      * Login.
      *
-     * @param request the request
+     * @param request
+     *            the request
      * @return the api response
-     * @throws Exception the exception
+     * @throws Exception
+     *             the exception
      */
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ApiResponse login(@RequestBody LoginRequest request) throws Exception {
@@ -59,9 +63,11 @@ public class AccountController extends AbstractController {
     /**
      * Regist.
      *
-     * @param request the request
+     * @param request
+     *            the request
      * @return the api response
-     * @throws Exception the exception
+     * @throws Exception
+     *             the exception
      */
     @RequestMapping(value = "/regist", method = RequestMethod.POST)
     public ApiResponse regist(@RequestBody AccountRegistRequest request) throws Exception {

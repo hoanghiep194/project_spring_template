@@ -31,8 +31,8 @@ public class AccountRegistRequest {
     private String confirmPassword;
 
     /** The mail address. */
-    @JsonProperty("email_address")
-    private String emailAddress;
+    @JsonProperty("email")
+    private String email;
 
     /** The birthday. */
     @JsonProperty("birthday")
